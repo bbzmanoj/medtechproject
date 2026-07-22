@@ -1,0 +1,44 @@
+name: windows-ui-tests
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  ui-tests:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Install Notepad++
+        run: winget install --id Notepad++.Notepad++ --source winget --accept-package-agreements --accept-source-agreements
+
+      - name: Restore
+        run: dotnet restore .\NotepadPlusPlus.FlaUI.sln
+
+      - name: Run tests
+        run: dotnet test .\NotepadPlusPlus.FlaUI.Tests\NotepadPlusPlus.FlaUI.Tests.csproj --logger "trx;LogFileName=results.trx"
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: notepadplusplus-ui-artifacts
+          path: |
+            **\TestArtifacts\**
+            **\*.trx
+
+      - name: Hosted runner limitation note
+        if: always()
+        shell: pwsh
+        run: |
+          Write-Host "Desktop UI automation may require a self-hosted Windows runner with an interactive user session for reliable execution."

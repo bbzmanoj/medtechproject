@@ -1,0 +1,12 @@
+{
+  "name": "notepadplusplus-flaui",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node .\\scripts\\run-tests.js all",
+    "test:smoke": "node .\\scripts\\run-tests.js smoke",
+    "test:file": "node .\\scripts\\run-tests.js file",
+    "test:tests": "node .\\scripts\\run-tests.js tests",
+    "test:one": "node .\\scripts\\run-tests.js filter"
+  }
+}

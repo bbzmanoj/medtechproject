@@ -1,0 +1,25 @@
+# .NET build output
+**/bin/
+**/obj/
+
+# Test and report artifacts
+**/TestArtifacts/
+NotepadPlusPlus.FlaUI.Tests/Reporting/report/
+
+# NUnit transient files
+**/nunit_random_seed.tmp
+TestResult.xml
+TestResults/
+
+# Node dependencies
+node_modules/
+
+# IDE and user-specific files
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Logs and temp files
+*.log
+*.tmp
