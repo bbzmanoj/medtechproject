@@ -17,15 +17,15 @@ end run
 on runScenarioA(artifactsRoot)
     set startedAt to current date
     set savePath to artifactsRoot & "/scenario-a-round-trip.txt"
-    set expectedText to my loremIpsumText(550)
+    set expectedText to my buildLoremIpsumDocument(550)
 
     try
         my resetTextEdit()
-        my createPlainTextDocument(expectedText)
+        my createPlainDocument(expectedText)
         my saveFrontDocument(savePath)
         my closeFrontDocumentWithoutSaving()
         my openDocument(savePath)
-        set actualText to my frontDocumentText()
+        set actualText to my readFrontDocumentContents()
         my closeFrontDocumentWithoutSaving()
 
         if actualText is expectedText then
@@ -50,12 +50,12 @@ on runScenarioC(artifactsRoot)
 
     try
         my resetTextEdit()
-        my createPlainTextDocument(expectedText)
+        my createPlainDocument(expectedText)
         my saveFrontDocument(savePath)
         set encodingReport to do shell script "file -I " & quoted form of savePath
         my closeFrontDocumentWithoutSaving()
         my openDocument(savePath)
-        set actualText to my frontDocumentText()
+        set actualText to my readFrontDocumentContents()
         my closeFrontDocumentWithoutSaving()
 
         if actualText is expectedText and encodingReport contains "utf-8" then
@@ -78,7 +78,7 @@ on runScenarioD(artifactsRoot)
         do shell script "printf %s " & quoted form of originalText & " > " & quoted form of savePath
         my resetTextEdit()
         my openDocument(savePath)
-        my setFrontDocumentText(modifiedText)
+        my setFrontDocumentContents(modifiedText)
         my requestCloseFrontDocument()
         delay 0.5
 
@@ -91,7 +91,7 @@ on runScenarioD(artifactsRoot)
         end tell
 
         delay 0.5
-        set actualEditorText to my frontDocumentText()
+        set actualEditorText to my readFrontDocumentContents()
         set diskText to do shell script "cat " & quoted form of savePath
         set appStillOpen to my checkTextEditRunning()
         my closeFrontDocumentWithoutSaving()
@@ -113,7 +113,7 @@ on runScenarioE()
 
     try
         my resetTextEdit()
-        my createPlainTextDocument(originalText)
+        my createPlainDocument(originalText)
 
         tell application "System Events"
             tell process "TextEdit"
@@ -126,7 +126,7 @@ on runScenarioE()
         end tell
 
         delay 0.5
-        set actualText to my frontDocumentText()
+        set actualText to my readFrontDocumentContents()
         my closeFrontDocumentWithoutSaving()
 
         if actualText is originalText then
@@ -158,17 +158,17 @@ on checkTextEditRunning()
     end tell
 end checkTextEditRunning
 
-on createPlainTextDocument(documentText)
+on createPlainDocument(documentContents)
     tell application "TextEdit"
         activate
         set newDocument to make new document
         try
             set rich text of newDocument to false
         end try
-        set text of newDocument to documentText
+        set text of newDocument to documentContents
     end tell
     delay 0.5
-end createPlainTextDocument
+end createPlainDocument
 
 on openDocument(filePath)
     tell application "TextEdit"
@@ -198,20 +198,20 @@ on requestCloseFrontDocument()
     end tell
 end requestCloseFrontDocument
 
-on setFrontDocumentText(documentText)
+on setFrontDocumentContents(documentContents)
     tell application "TextEdit"
-        set text of front document to documentText
+        set text of front document to documentContents
     end tell
     delay 0.4
-end setFrontDocumentText
+end setFrontDocumentContents
 
-on frontDocumentText()
+on readFrontDocumentContents()
     tell application "TextEdit"
         return (text of front document) as string
     end tell
-end frontDocumentText
+end readFrontDocumentContents
 
-on loremIpsumText(minimumWords)
+on buildLoremIpsumDocument(minimumWords)
     set seedSentence to "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
     set wordCount to count words of seedSentence
     set repetitions to (minimumWords div wordCount) + 1
@@ -222,7 +222,7 @@ on loremIpsumText(minimumWords)
     end repeat
 
     return text 1 thru -2 of outputText
-end loremIpsumText
+end buildLoremIpsumDocument
 
 on ensureDirectory(directoryPath)
     do shell script "mkdir -p " & quoted form of directoryPath
