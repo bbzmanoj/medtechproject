@@ -16,12 +16,15 @@ public abstract class UiTestBase
 
     protected string TestArtifactDirectory { get; private set; } = null!;
 
+    protected int CurrentAttempt { get; private set; }
+
     [SetUp]
     public void SetUpUiTest()
     {
-        var attempt = TestAttemptTracker.StartAttempt(TestContext.CurrentContext.Test.ID);
+        CurrentAttempt = TestAttemptTracker.StartAttempt(TestContext.CurrentContext.Test.ID);
         TestArtifactDirectory = ArtifactPaths.CreateForCurrentTest();
-        ExtentReportManager.StartTest(TestContext.CurrentContext.Test.Name, attempt);
+        ExtentReportManager.StartTest(TestContext.CurrentContext.Test.Name, CurrentAttempt);
+        TestContext.Progress.WriteLine($"[TEST ATTEMPT {CurrentAttempt} STARTED] {TestContext.CurrentContext.Test.Name}");
         LaunchSession();
     }
 
@@ -42,7 +45,7 @@ public abstract class UiTestBase
             TestContext.CurrentContext.Result.Message,
             screenshotPath);
 
-        TestContext.Progress.WriteLine($"[TEST {FormatOutcome(outcome)}] {TestContext.CurrentContext.Test.Name}");
+        TestContext.Progress.WriteLine($"[TEST ATTEMPT {CurrentAttempt} {FormatOutcome(outcome)}] {TestContext.CurrentContext.Test.Name}");
 
         Session?.Dispose();
     }

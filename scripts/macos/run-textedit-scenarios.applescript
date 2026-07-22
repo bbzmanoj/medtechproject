@@ -93,7 +93,7 @@ on runScenarioD(artifactsRoot)
         delay 0.5
         set actualEditorText to my frontDocumentText()
         set diskText to do shell script "cat " & quoted form of savePath
-        set appStillOpen to my textEditIsRunning()
+        set appStillOpen to my checkTextEditRunning()
         my closeFrontDocumentWithoutSaving()
 
         if appStillOpen and actualEditorText is modifiedText and diskText is originalText then
@@ -145,18 +145,18 @@ on resetTextEdit()
     end tell
     delay 0.5
 
-    if my textEditIsRunning() then
+    if my checkTextEditRunning() then
         try
             tell application "TextEdit" to close every document saving no
         end try
     end if
 end resetTextEdit
 
-on textEditIsRunning()
+on checkTextEditRunning()
     tell application "System Events"
         return exists process "TextEdit"
     end tell
-end textEditIsRunning
+end checkTextEditRunning
 
 on createPlainTextDocument(documentText)
     tell application "TextEdit"

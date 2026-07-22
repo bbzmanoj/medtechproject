@@ -165,7 +165,7 @@ public static class ExtentReportManager
     public static void StartTest(string testName, int attempt)
     {
         Initialize();
-        CurrentTest.Value = report!.CreateTest(testName).Info($"Attempt {attempt}");
+        CurrentTest.Value = report!.CreateTest($"{testName} (Attempt {attempt})").Info($"Attempt {attempt}");
     }
 
     public static void CompleteTest(TestStatus status, string? message, string? screenshotPath)
