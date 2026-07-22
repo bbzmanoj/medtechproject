@@ -8,7 +8,7 @@ This repository scaffolds a Windows desktop UI automation suite for Notepad++ us
 - A desktop-oriented Page Object Model for the main editor, menu bar, Replace dialog, native file dialogs, and unsaved-changes dialog, wrapped by higher-level editor abstractions.
 - Windows-focused automated scenarios for file round-trip, replace/undo, Unicode handling, dialog behavior, shortcut abstraction, and a deliberately flaky retry example.
 - Extent HTML reporting with screenshot capture on failure, published to an openable `index.html`.
-- A GitHub Actions workflow for Windows execution.
+- A GitHub Actions workflow with a working Windows execution lane and a macOS TextEdit lane executed through AppleScript on a macOS runner.
 - Supporting design and implementation docs under `docs/`.
 
 ## Future macOS implementation
@@ -19,9 +19,11 @@ The framework is already structured so a future macOS lane can be added without 
 
 - `Abstractions/` defines the platform-neutral editor contracts.
 - `Platforms/Windows/` contains the working Windows adapter that wraps the existing FlaUI implementation.
-- `Platforms/Mac/` is reserved for a future TextEdit adapter.
+- `Platforms/Mac/` contains the TextEdit adapter contract and generated Mac-lane outputs.
 
 That means the existing Windows suite remains fully operational today, while the project structure already demonstrates how a macOS implementation would plug into the same scenario-facing API later.
+
+The repository also includes a GitHub Actions macOS runner lane that executes a TextEdit scenario runner through AppleScript. The Windows lane continues to run the real FlaUI-based tests.
 
 ## Prerequisites
 

@@ -5,6 +5,8 @@
 # Test and report artifacts
 **/TestArtifacts/
 NotepadPlusPlus.FlaUI.Tests/Reporting/report/
+NotepadPlusPlus.FlaUI.Tests/Platforms/Mac/artifacts/
+NotepadPlusPlus.FlaUI.Tests/Platforms/Mac/report/
 
 # NUnit transient files
 **/nunit_random_seed.tmp

@@ -1,4 +1,4 @@
-name: windows-ui-tests
+name: desktop-ui-tests
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   pull_request:
 
 jobs:
-  ui-tests:
+  windows-ui-tests:
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -32,9 +32,10 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: notepadplusplus-ui-artifacts
+          name: windows-ui-artifacts
           path: |
             **\TestArtifacts\**
+            NotepadPlusPlus.FlaUI.Tests\Reporting\report\**
             **\*.trx
 
       - name: Hosted runner limitation note
@@ -42,3 +43,41 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "Desktop UI automation may require a self-hosted Windows runner with an interactive user session for reliable execution."
+
+  macos-textedit-tests:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run TextEdit scenarios
+        shell: bash
+        run: node ./scripts/run-macos-tests.js
+
+      - name: Publish Mac lane summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## macOS lane status"
+            echo ""
+            echo "TextEdit scenario execution ran on the macOS runner."
+            echo ""
+            echo "- Shared scenario abstractions are present under NotepadPlusPlus.FlaUI.Tests/Abstractions/."
+            echo "- The AppleScript-based TextEdit runner executed through scripts/run-macos-tests.js."
+            echo "- Scenario B remains planned until a dedicated TextEdit replace-dialog mapping is implemented."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Mac lane artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-textedit-artifacts
+          path: |
+            NotepadPlusPlus.FlaUI.Tests/Platforms/Mac/artifacts/**
+            NotepadPlusPlus.FlaUI.Tests/Platforms/Mac/report/**

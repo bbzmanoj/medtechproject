@@ -1,0 +1,35 @@
+{
+  "platform": "macOS",
+  "application": "TextEdit",
+  "runner": "node ./scripts/run-macos-tests.js",
+  "automation": "AppleScript via osascript",
+  "artifactsRoot": "NotepadPlusPlus.FlaUI.Tests/Platforms/Mac/artifacts",
+  "reportPath": "NotepadPlusPlus.FlaUI.Tests/Platforms/Mac/report/index.html",
+  "scenarios": [
+    {
+      "id": "ScenarioA",
+      "name": "FileRoundTrip",
+      "status": "implemented"
+    },
+    {
+      "id": "ScenarioB",
+      "name": "FindAndReplace",
+      "status": "planned"
+    },
+    {
+      "id": "ScenarioC",
+      "name": "UnicodeAndEncoding",
+      "status": "implemented"
+    },
+    {
+      "id": "ScenarioD",
+      "name": "UnsavedChangesDialog",
+      "status": "implemented"
+    },
+    {
+      "id": "ScenarioE",
+      "name": "KeyboardShortcutParity",
+      "status": "implemented"
+    }
+  ]
+}
