@@ -106,6 +106,14 @@ That means the current Windows suite still runs exactly as before, while the des
 - The UTF-8 save path assumes a standard Notepad++ installation and keeps encoding selection best-effort at the POM layer.
 - GitHub-hosted Windows runners are not a reliable place for interactive desktop automation. The provided workflow is best suited to a self-hosted Windows runner with an interactive session.
 
+## Flakiness analysis
+
+Desktop UI automation is most vulnerable to timing and focus issues rather than core functional defects. In this suite, the highest flakiness risks are delayed dialog availability, clipboard timing, focus loss between the test runner and the application window, and keystroke batching inside the editor control. The most important known trap is the undo flow after rapid typing or replace operations. If the editor processes input in smaller chunks than the test assumes, a single undo may not fully restore the document, which can produce intermittent failures even when product behavior is correct.
+
+The mitigation strategy in this framework is to make instability visible and bounded. Failures capture screenshots and test-specific artifacts, dialog interactions use explicit waits instead of blind sequencing, and retry behavior is isolated to intentionally flaky coverage rather than applied across the whole suite. For the undo scenario specifically, the suite now verifies restoration with a short stabilization wait instead of assuming the buffer is immediately consistent after the shortcut fires.
+
+Operationally, a flaky pass is treated as a warning, not a success signal. If a test needs repeated retries, the fix should target the root cause: stronger locators, better synchronization, or moving that assertion to a lower layer where UI timing is not the controlling variable. That keeps the suite useful as an engineering signal rather than a noisy gate.
+
 ## AI usage note
 
 AI assistance was used to accelerate initial scaffolding, documentation drafting, and framework structuring. The generated output still requires human review, locator refinement, and execution validation against the target Notepad++ version.
