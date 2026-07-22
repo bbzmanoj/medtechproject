@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Tool Decision: Why FlaUI for the Patient Inbox User Story</title>
+  <style>
+    :root {
+      --ink: #1f2933;
+      --muted: #52606d;
+      --accent: #163a5f;
+      --accent-soft: #eef3f8;
+      --success-soft: #eef6f1;
+      --surface: #ffffff;
+      --surface-alt: #f5f7fa;
+      --border: #d9e2ec;
+    }
+
+    @page {
+      size: A4;
+      margin: 16mm 15mm;
+    }
+
+    body {
+      font-family: "Cambria", "Segoe UI", Calibri, Arial, sans-serif;
+      color: var(--ink);
+      background: var(--surface);
+      line-height: 1.55;
+      margin: 0;
+      font-size: 15px;
+    }
+
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    .hero {
+      border-bottom: 2px solid var(--accent);
+      padding: 0 0 14px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      color: var(--accent);
+      font-size: 28px;
+      line-height: 1.2;
+      margin: 0 0 6px;
+    }
+
+    h2 {
+      color: var(--accent);
+      font-size: 18px;
+      margin: 20px 0 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+    }
+
+    p {
+      margin: 8px 0;
+      font-size: 15px;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 15px;
+      margin: 0;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .summary-card {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+
+    .summary-card strong {
+      display: block;
+      color: var(--accent);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .summary-card span {
+      font-size: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin: 10px 0 8px;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 9px 10px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: var(--surface-alt);
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .decision {
+      background: var(--success-soft);
+      border: 1px solid #cfe3d6;
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .bullets {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    .bullets li {
+      margin: 5px 0;
+      font-size: 15px;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      padding: 10px 12px;
+      background: var(--accent-soft);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--accent);
+      font-size: 14px;
+    }
+
+    @media print {
+      body {
+        font-size: 15px;
+      }
+
+      .summary-grid {
+        gap: 10px;
+      }
+
+      .hero,
+      table,
+      .decision,
+      .footer-note,
+      .summary-card {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Tool Decision: Why FlaUI for the Patient Inbox User Story</h1>
+      <p class="lead">Comparison of FlaUI against WinAppDriver + Appium for Medtech's Windows .NET desktop application context, anchored to the “Patient Inbox email multiple items” workflow.</p>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <strong>Primary Goal</strong>
+          <span>Automate a multi-step patient inbox email workflow with stable desktop assertions.</span>
+        </div>
+        <div class="summary-card">
+          <strong>Recommended Tool</strong>
+          <span>FlaUI for the Windows automation lane.</span>
+        </div>
+        <div class="summary-card">
+          <strong>Decision Basis</strong>
+          <span>Better control of dialogs, selection state, and Windows-native workflow transitions.</span>
+        </div>
+      </div>
+    </section>
+
+    <h2>Context</h2>
+    <p>Medtech's products are Windows desktop applications built primarily in .NET, so the framework choice should favor strong Windows desktop support, good C# integration, and maintainable UI locators. For this repository the target application is Notepad++, which exposes a mixture of standard Windows UI, native dialogs, and custom editor surfaces. That makes the quality of the Windows automation layer more important than nominal cross-platform reach.</p>
+    <p>For the user story "Patient Inbox email multiple items", the value of automation comes from validating a real operator workflow: selecting multiple inbox items, launching the email action, checking the correct context is carried forward, handling modal prompts, and confirming the final application state. That is a Windows desktop interaction problem more than a generic cross-platform automation problem.</p>
+
+    <h2>Options Compared</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Option</th>
+          <th>Strengths</th>
+          <th>Weaknesses</th>
+          <th>Fit for Medtech</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>FlaUI</td>
+          <td>Native C# API, direct Windows UI Automation access, no separate server, strong control over windows and dialogs</td>
+          <td>Windows only, still sensitive to desktop-session CI limits</td>
+          <td>Best fit for a .NET-heavy Windows desktop estate and user-story-driven inbox automation</td>
+        </tr>
+        <tr>
+          <td>WinAppDriver + Appium</td>
+          <td>Familiar WebDriver model, broader ecosystem, useful for teams already invested in Appium</td>
+          <td>Requires a separate driver service, more moving parts, slower setup and debug loop, less direct control for rich Windows desktop behavior</td>
+          <td>Acceptable, but heavier than needed for a Windows-first .NET suite</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Decision</h2>
+    <p class="decision">FlaUI is the better choice for the Medtech-focused Windows lane, especially for the Patient Inbox email-multiple-items workflow.</p>
+
+    <h2>Why FlaUI Is Useful For This User Story</h2>
+    <p>This user story depends on reliable interaction with desktop UI states, not just screen navigation. A patient inbox flow can involve selecting multiple records, invoking an email action from a toolbar or context menu, validating a compose dialog, and handling confirmation prompts. FlaUI is strong here because it talks directly to Windows UI Automation and lets the tests reason about windows, controls, focus, and dialog ownership explicitly.</p>
+    <p>That helps the suite verify business behavior that matters to Medtech rather than just low-level clicks. The tests can assert that the intended inbox items are selected, the correct email action opens, the expected content or attachments are present, cancellation is handled safely, and the UI remains in a valid state after the workflow finishes.</p>
+
+    <h2>Why FlaUI Won</h2>
+    <p>FlaUI matches the engineering stack. The suite is written in C#, the application domain is Windows desktop, and the team context is .NET-oriented. FlaUI keeps the framework in one language and one runtime, which reduces operational complexity and lowers the barrier to ownership for developers and test engineers.</p>
+    <p>FlaUI also talks directly to Windows UI Automation instead of adding a WebDriver server between the tests and the application. That matters for desktop products with modal dialogs, native file pickers, multi-step workflows, and custom controls. In practice it gives better transparency when locating windows, handling accessibility surfaces, and capturing failures.</p>
+    <p>It is also simpler to debug locally. WinAppDriver + Appium introduces extra lifecycle concerns such as server startup, port management, capability negotiation, and remote session stability. Those concerns are reasonable in some estates, but they are overhead for a Medtech Windows desktop framework where the main goal is maintainable, trustworthy UI coverage.</p>
+    <p>For this user story, that thinner stack is practical. The team can model the inbox window, email dialog, and confirmation prompts directly in C# page objects and dialog objects. That makes the tests read more like business scenarios and makes maintenance easier when the workflow changes.</p>
+
+    <ul class="bullets">
+      <li>Direct UI Automation access makes dialog and window handling more transparent.</li>
+      <li>Selection, modal confirmation, and final-state validation map well to FlaUI's object model.</li>
+      <li>One language and one runtime keeps maintenance simpler for a .NET-focused team.</li>
+      <li>Failure investigation is easier because the framework stack is thinner and more local.</li>
+    </ul>
+
+    <h2>Why Not WinAppDriver + Appium</h2>
+    <p>WinAppDriver + Appium is still a legitimate Windows automation option, but it is not the best fit here. Its biggest advantage is consistency with teams already standardized on Appium or WebDriver. That advantage is weaker when the target system is a Windows-native .NET application and the automation team can stay fully in C#.</p>
+    <p>For this user story specifically, WinAppDriver + Appium adds infrastructure that does not improve the business validation. The team would still need to solve the same desktop concerns such as multi-selection, focus changes, compose windows, and confirmation prompts, but with an extra driver service in the middle.</p>
+    <p>For Medtech, the deciding factor is maintainability over infrastructure breadth. FlaUI gives a thinner stack, fewer runtime dependencies, and a more direct path to stable Windows desktop automation. That makes it the stronger default choice for this project.</p>
+
+    <p class="footer-note">Recommendation: use FlaUI as the default Windows automation framework for Medtech desktop applications, and add other platform adapters only where product scope requires them.</p>
+  </main>
+</body>
+</html>
