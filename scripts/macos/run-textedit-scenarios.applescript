@@ -14,6 +14,7 @@ on run argv
     return my joinLines(scenarioResults)
 end run
 
+
 on runScenarioA(artifactsRoot)
     set startedAt to current date
     set savePath to artifactsRoot & "/scenario-a-round-trip.txt"
@@ -25,6 +26,7 @@ on runScenarioA(artifactsRoot)
         my saveFrontDocument(savePath)
         my closeFrontDocumentWithoutSaving()
         my openDocument(savePath)
+
         set actualText to my readFrontDocumentContents()
         my closeFrontDocumentWithoutSaving()
 
@@ -38,10 +40,12 @@ on runScenarioA(artifactsRoot)
     end try
 end runScenarioA
 
+
 on runScenarioB()
     set startedAt to current date
     return my formatResult("ScenarioB", "skipped", startedAt, "Planned: TextEdit find-and-replace dialog mapping has not been implemented yet.")
 end runScenarioB
+
 
 on runScenarioC(artifactsRoot)
     set startedAt to current date
@@ -52,9 +56,12 @@ on runScenarioC(artifactsRoot)
         my resetTextEdit()
         my createPlainDocument(expectedText)
         my saveFrontDocument(savePath)
+
         set encodingReport to do shell script "file -I " & quoted form of savePath
+
         my closeFrontDocumentWithoutSaving()
         my openDocument(savePath)
+
         set actualText to my readFrontDocumentContents()
         my closeFrontDocumentWithoutSaving()
 
@@ -68,6 +75,7 @@ on runScenarioC(artifactsRoot)
     end try
 end runScenarioC
 
+
 on runScenarioD(artifactsRoot)
     set startedAt to current date
     set savePath to artifactsRoot & "/scenario-d-unsaved.txt"
@@ -76,24 +84,32 @@ on runScenarioD(artifactsRoot)
 
     try
         do shell script "printf %s " & quoted form of originalText & " > " & quoted form of savePath
+
         my resetTextEdit()
         my openDocument(savePath)
         my setFrontDocumentContents(modifiedText)
         my requestCloseFrontDocument()
+
         delay 0.5
 
         tell application "System Events"
             tell process "TextEdit"
                 set frontmost to true
-                if not (exists sheet 1 of window 1) then error "The unsaved-changes confirmation sheet did not appear."
+
+                if not (exists sheet 1 of window 1) then
+                    error "The unsaved-changes confirmation sheet did not appear."
+                end if
+
                 click button "Cancel" of sheet 1 of window 1
             end tell
         end tell
 
         delay 0.5
+
         set actualEditorText to my readFrontDocumentContents()
         set diskText to do shell script "cat " & quoted form of savePath
         set appStillOpen to my checkTextEditRunning()
+
         my closeFrontDocumentWithoutSaving()
 
         if appStillOpen and actualEditorText is modifiedText and diskText is originalText then
@@ -105,6 +121,7 @@ on runScenarioD(artifactsRoot)
         return my formatResult("ScenarioD", "failed", startedAt, errorMessage)
     end try
 end runScenarioD
+
 
 on runScenarioE()
     set startedAt to current date
@@ -126,6 +143,7 @@ on runScenarioE()
         end tell
 
         delay 0.5
+
         set actualText to my readFrontDocumentContents()
         my closeFrontDocumentWithoutSaving()
 
@@ -139,18 +157,23 @@ on runScenarioE()
     end try
 end runScenarioE
 
+
 on resetTextEdit()
     tell application "TextEdit"
         activate
     end tell
+
     delay 0.5
 
     if my checkTextEditRunning() then
         try
-            tell application "TextEdit" to close every document saving no
+            tell application "TextEdit"
+                close every document saving no
+            end tell
         end try
     end if
 end resetTextEdit
+
 
 on checkTextEditRunning()
     tell application "System Events"
@@ -158,39 +181,46 @@ on checkTextEditRunning()
     end tell
 end checkTextEditRunning
 
+
 on createPlainDocument(documentContents)
     tell application "TextEdit"
         activate
-        set newDocument to make new document
-        try
-            set rich text of newDocument to false
-        end try
-        set text of newDocument to documentContents
+        set newDocument to make new document with properties {text:documentContents}
     end tell
+
     delay 0.5
 end createPlainDocument
+
 
 on openDocument(filePath)
     tell application "TextEdit"
         activate
         open POSIX file filePath
     end tell
+
     delay 0.8
 end openDocument
+
 
 on saveFrontDocument(filePath)
     tell application "TextEdit"
         save front document in POSIX file filePath
     end tell
+
     delay 0.8
 end saveFrontDocument
 
+
 on closeFrontDocumentWithoutSaving()
     tell application "TextEdit"
-        if (count of documents) is greater than 0 then close front document saving no
+        if (count of documents) is greater than 0 then
+            close front document saving no
+        end if
     end tell
+
     delay 0.4
 end closeFrontDocumentWithoutSaving
+
 
 on requestCloseFrontDocument()
     tell application "TextEdit"
@@ -198,18 +228,22 @@ on requestCloseFrontDocument()
     end tell
 end requestCloseFrontDocument
 
+
 on setFrontDocumentContents(documentContents)
     tell application "TextEdit"
         set text of front document to documentContents
     end tell
+
     delay 0.4
 end setFrontDocumentContents
+
 
 on readFrontDocumentContents()
     tell application "TextEdit"
         return (text of front document) as string
     end tell
 end readFrontDocumentContents
+
 
 on buildLoremIpsumDocument(minimumWords)
     set seedSentence to "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
@@ -221,22 +255,32 @@ on buildLoremIpsumDocument(minimumWords)
         set outputText to outputText & seedSentence & " "
     end repeat
 
-    return text 1 thru -2 of outputText
+    if (length of outputText) > 0 then
+        set outputText to (characters 1 thru -2 of outputText) as text
+    end if
+
+    return outputText
 end buildLoremIpsumDocument
+
 
 on ensureDirectory(directoryPath)
     do shell script "mkdir -p " & quoted form of directoryPath
 end ensureDirectory
+
 
 on formatResult(identifier, statusValue, startedAt, detailsValue)
     set durationMs to ((current date) - startedAt) * 1000
     return identifier & "|||" & statusValue & "|||" & durationMs & "|||" & detailsValue
 end formatResult
 
+
 on joinLines(lineItems)
     set previousDelimiters to AppleScript's text item delimiters
+
     set AppleScript's text item delimiters to linefeed
     set joinedText to lineItems as text
+
     set AppleScript's text item delimiters to previousDelimiters
+
     return joinedText
 end joinLines
