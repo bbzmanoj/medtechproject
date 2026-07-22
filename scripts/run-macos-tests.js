@@ -48,13 +48,14 @@ function generateHtmlReport(results, contract) {
   const passedCount = results.filter((result) => result.status === 'passed').length;
   const failedCount = results.filter((result) => result.status === 'failed').length;
   const skippedCount = results.filter((result) => result.status === 'skipped').length;
+  const totalCount = results.length;
+  const totalDurationMs = results.reduce((sum, result) => sum + result.durationMs, 0);
   const generatedAt = new Date().toISOString();
   const rows = results.map((result) => {
-    const badgeClass = result.status;
     return `
       <tr>
         <td>${escapeHtml(result.id)}</td>
-        <td>${escapeHtml(result.status)}</td>
+        <td><span class="status-pill ${escapeHtml(result.status)}">${escapeHtml(result.status)}</span></td>
         <td>${escapeHtml(result.implementationStatus)}</td>
         <td>${result.durationMs}</td>
         <td>${escapeHtml(result.details)}</td>
@@ -70,14 +71,26 @@ function generateHtmlReport(results, contract) {
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; background: #f5f7fb; color: #1f2937; }
     header { padding: 32px; background: linear-gradient(135deg, #0f3d56, #1b6b7b); color: #fff; }
     main { padding: 24px 32px; }
-    .summary { display: flex; gap: 16px; margin: 0 0 24px; flex-wrap: wrap; }
-    .card { background: #fff; border-radius: 16px; padding: 16px 20px; box-shadow: 0 10px 30px rgba(15, 61, 86, 0.08); min-width: 160px; }
+    .summary, .charts { display: flex; gap: 16px; margin: 0 0 24px; flex-wrap: wrap; }
+    .card, .chart-card { background: #fff; border-radius: 16px; padding: 16px 20px; box-shadow: 0 10px 30px rgba(15, 61, 86, 0.08); min-width: 160px; }
+    .chart-card { flex: 1 1 320px; }
     .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: #6b7280; }
     .value { font-size: 28px; font-weight: 700; margin-top: 6px; }
+    .subtle { color: #475467; margin-top: 8px; }
+    .chart-row { display: grid; grid-template-columns: 90px 1fr 48px; gap: 12px; align-items: center; margin: 12px 0; }
+    .chart-track { background: #e5e7eb; border-radius: 999px; overflow: hidden; height: 14px; }
+    .chart-fill { height: 100%; border-radius: 999px; }
+    .chart-fill.passed { background: #22a06b; }
+    .chart-fill.failed { background: #d92d20; }
+    .chart-fill.skipped { background: #1570ef; }
     table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(15, 61, 86, 0.08); }
     th, td { padding: 14px 16px; border-bottom: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
     th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: #6b7280; background: #f9fafb; }
     tr:last-child td { border-bottom: 0; }
+    .status-pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+    .status-pill.passed { background: #e8f7f0; color: #13795b; }
+    .status-pill.failed { background: #fdeceb; color: #b42318; }
+    .status-pill.skipped { background: #e8f1fd; color: #175cd3; }
     .note { margin-top: 16px; color: #475467; }
   </style>
 </head>
@@ -92,6 +105,21 @@ function generateHtmlReport(results, contract) {
       <div class="card"><div class="label">Failed</div><div class="value">${failedCount}</div></div>
       <div class="card"><div class="label">Skipped</div><div class="value">${skippedCount}</div></div>
       <div class="card"><div class="label">OS</div><div class="value">macOS</div></div>
+    </section>
+    <section class="charts">
+      <div class="chart-card">
+        <div class="label">Status Distribution</div>
+        ${buildChartRow('Passed', passedCount, totalCount, 'passed')}
+        ${buildChartRow('Failed', failedCount, totalCount, 'failed')}
+        ${buildChartRow('Skipped', skippedCount, totalCount, 'skipped')}
+      </div>
+      <div class="chart-card">
+        <div class="label">Run Summary</div>
+        <div class="value">${totalCount}</div>
+        <div class="subtle">Total scenarios in this report</div>
+        <div class="subtle">Adapter: ${escapeHtml(contract.application)}</div>
+        <div class="subtle">Total duration: ${totalDurationMs} ms</div>
+      </div>
     </section>
     <table>
       <thead>
@@ -109,6 +137,16 @@ function generateHtmlReport(results, contract) {
   </main>
 </body>
 </html>`;
+}
+
+function buildChartRow(label, count, totalCount, cssClass) {
+  const percentage = totalCount === 0 ? 0 : Math.round((count * 100) / totalCount);
+  return `
+    <div class="chart-row">
+      <span>${escapeHtml(label)}</span>
+      <div class="chart-track"><div class="chart-fill ${cssClass}" style="width: ${percentage}%"></div></div>
+      <span>${percentage}%</span>
+    </div>`;
 }
 
 function escapeHtml(value) {
