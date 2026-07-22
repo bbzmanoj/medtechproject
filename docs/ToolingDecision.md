@@ -33,18 +33,19 @@ For a Medtech user story, those checks need to be trustworthy because the value 
 
 ## Why FlaUI won
 
-First, it matches the engineering stack. The suite is written in C#, the application domain is Windows desktop, and the team context is .NET-oriented. FlaUI keeps the framework in one language and one runtime, which reduces operational complexity and lowers the barrier to ownership for developers and test engineers.
-
-Second, FlaUI talks directly to Windows UI Automation instead of adding a WebDriver server between the tests and the application. That matters for desktop products with modal dialogs, native file pickers, multi-step desktop workflows, and custom controls. In practice it gives better transparency when locating windows, handling accessibility surfaces, and capturing failures.
-
-Third, FlaUI is simpler to debug locally. WinAppDriver + Appium introduces extra lifecycle concerns such as server startup, port management, capability negotiation, and remote session stability. Those concerns are reasonable in some estates, but they are overhead for a Medtech Windows desktop framework where the main goal is maintainable, trustworthy UI coverage.
-
-Fourth, FlaUI fits better when the team wants tests to read like business scenarios. For the Patient Inbox email-multiple-items story, the automation can be expressed in page objects and dialog objects that map closely to what a user does in the desktop application. That produces clearer test intent and simpler maintenance when the workflow changes.
+- **Engineering fit:** FlaUI stays in C# for a Windows desktop application, which keeps the framework aligned with the .NET stack and easier for the team to own.
+- **Direct UI Automation:** FlaUI works directly with Windows UI Automation, making dialogs, file pickers, and custom controls easier to locate and handle.
+- **Simpler debugging:** FlaUI avoids the extra driver lifecycle and session-management overhead that comes with WinAppDriver + Appium.
+- **Better scenario modeling:** The inbox window, email dialog, and confirmation prompts can be represented cleanly in page objects and dialog objects.
+- **Transparent dialog handling:** Direct automation access makes modal windows and confirmation flows easier to inspect and stabilize.
+- **Workflow coverage:** Multi-selection, confirmation behavior, and final-state validation map well to FlaUI's object model.
+- **Lower maintenance:** One language and one runtime reduce operational complexity for a .NET-focused team.
+- **Faster failure analysis:** A thinner framework stack makes issues easier to trace and debug locally.
 
 ## Why not WinAppDriver + Appium
 
-WinAppDriver + Appium is still a legitimate Windows automation option, but it is not the best fit here. Its biggest advantage is consistency with teams already standardized on Appium or WebDriver. That advantage is weaker when the target system is a Windows-native .NET application and the automation team can stay fully in C#.
-
-For this user story specifically, WinAppDriver + Appium adds infrastructure that does not directly improve the validation. The team would need to manage the driver process and session lifecycle while still solving the same desktop problems: multi-selection, modal dialogs, focus changes, and workflow assertions. In other words, it adds more moving parts without giving a clear testing benefit for this scenario.
-
-For Medtech, the deciding factor is maintainability over infrastructure breadth. FlaUI gives a thinner stack, fewer runtime dependencies, and a more direct path to stable Windows desktop automation. That makes it the stronger default choice for this project.
+- **Extra infrastructure:** WinAppDriver + Appium introduces a separate driver service and more moving parts without improving this workflow's business validation.
+- **Weaker fit for this app type:** Its WebDriver-style model is less compelling when the product is a Windows-native .NET desktop application.
+- **Same desktop challenges anyway:** The team would still need to handle multi-selection, modal dialogs, focus changes, compose windows, and confirmation prompts.
+- **Higher maintenance cost:** More runtime dependencies and session-management concerns make the setup heavier to support.
+- **Lower practical value here:** For Medtech, maintainability matters more than broader ecosystem reach, which makes FlaUI the stronger default choice.

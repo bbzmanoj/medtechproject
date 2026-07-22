@@ -224,22 +224,25 @@
     <p>That helps the suite verify business behavior that matters to Medtech rather than just low-level clicks. The tests can assert that the intended inbox items are selected, the correct email action opens, the expected content or attachments are present, cancellation is handled safely, and the UI remains in a valid state after the workflow finishes.</p>
 
     <h2>Why FlaUI Won</h2>
-    <p>FlaUI matches the engineering stack. The suite is written in C#, the application domain is Windows desktop, and the team context is .NET-oriented. FlaUI keeps the framework in one language and one runtime, which reduces operational complexity and lowers the barrier to ownership for developers and test engineers.</p>
-    <p>FlaUI also talks directly to Windows UI Automation instead of adding a WebDriver server between the tests and the application. That matters for desktop products with modal dialogs, native file pickers, multi-step workflows, and custom controls. In practice it gives better transparency when locating windows, handling accessibility surfaces, and capturing failures.</p>
-    <p>It is also simpler to debug locally. WinAppDriver + Appium introduces extra lifecycle concerns such as server startup, port management, capability negotiation, and remote session stability. Those concerns are reasonable in some estates, but they are overhead for a Medtech Windows desktop framework where the main goal is maintainable, trustworthy UI coverage.</p>
-    <p>For this user story, that thinner stack is practical. The team can model the inbox window, email dialog, and confirmation prompts directly in C# page objects and dialog objects. That makes the tests read more like business scenarios and makes maintenance easier when the workflow changes.</p>
-
     <ul class="bullets">
-      <li>Direct UI Automation access makes dialog and window handling more transparent.</li>
-      <li>Selection, modal confirmation, and final-state validation map well to FlaUI's object model.</li>
-      <li>One language and one runtime keeps maintenance simpler for a .NET-focused team.</li>
-      <li>Failure investigation is easier because the framework stack is thinner and more local.</li>
+      <li><strong>Engineering fit:</strong> FlaUI stays in C# for a Windows desktop application, which keeps the framework aligned with the .NET stack and easier for the team to own.</li>
+      <li><strong>Direct UI Automation:</strong> FlaUI works directly with Windows UI Automation, making dialogs, file pickers, and custom controls easier to locate and handle.</li>
+      <li><strong>Simpler debugging:</strong> FlaUI avoids the extra driver lifecycle and session-management overhead that comes with WinAppDriver + Appium.</li>
+      <li><strong>Better scenario modeling:</strong> The inbox window, email dialog, and confirmation prompts can be represented cleanly in page objects and dialog objects.</li>
+      <li><strong>Transparent dialog handling:</strong> Direct automation access makes modal windows and confirmation flows easier to inspect and stabilize.</li>
+      <li><strong>Workflow coverage:</strong> Multi-selection, confirmation behavior, and final-state validation map well to FlaUI's object model.</li>
+      <li><strong>Lower maintenance:</strong> One language and one runtime reduce operational complexity for a .NET-focused team.</li>
+      <li><strong>Faster failure analysis:</strong> A thinner framework stack makes issues easier to trace and debug locally.</li>
     </ul>
 
     <h2>Why Not WinAppDriver + Appium</h2>
-    <p>WinAppDriver + Appium is still a legitimate Windows automation option, but it is not the best fit here. Its biggest advantage is consistency with teams already standardized on Appium or WebDriver. That advantage is weaker when the target system is a Windows-native .NET application and the automation team can stay fully in C#.</p>
-    <p>For this user story specifically, WinAppDriver + Appium adds infrastructure that does not improve the business validation. The team would still need to solve the same desktop concerns such as multi-selection, focus changes, compose windows, and confirmation prompts, but with an extra driver service in the middle.</p>
-    <p>For Medtech, the deciding factor is maintainability over infrastructure breadth. FlaUI gives a thinner stack, fewer runtime dependencies, and a more direct path to stable Windows desktop automation. That makes it the stronger default choice for this project.</p>
+    <ul class="bullets">
+      <li><strong>Extra infrastructure:</strong> WinAppDriver + Appium introduces a separate driver service and more moving parts without improving this workflow's business validation.</li>
+      <li><strong>Weaker fit for this app type:</strong> Its WebDriver-style model is less compelling when the product is a Windows-native .NET desktop application.</li>
+      <li><strong>Same desktop challenges anyway:</strong> The team would still need to handle multi-selection, modal dialogs, focus changes, compose windows, and confirmation prompts.</li>
+      <li><strong>Higher maintenance cost:</strong> More runtime dependencies and session-management concerns make the setup heavier to support.</li>
+      <li><strong>Lower practical value here:</strong> For Medtech, maintainability matters more than broader ecosystem reach, which makes FlaUI the stronger default choice.</li>
+    </ul>
 
     <p class="footer-note">Recommendation: use FlaUI as the default Windows automation framework for Medtech desktop applications, and add other platform adapters only where product scope requires them.</p>
   </main>
