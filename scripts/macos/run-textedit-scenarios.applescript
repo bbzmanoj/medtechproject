@@ -19,15 +19,23 @@ on runScenarioA(artifactsRoot)
     set startedAt to current date
     set savePath to artifactsRoot & "/scenario-a-round-trip.txt"
     set expectedText to my buildLoremIpsumDocument(550)
+    set currentStep to "initialization"
 
     try
+        set currentStep to "resetting TextEdit"
         my resetTextEdit()
+        set currentStep to "creating a plain-text document"
         my createPlainDocument(expectedText)
+        set currentStep to "saving the round-trip file"
         my saveFrontDocument(savePath)
+        set currentStep to "closing the saved document"
         my closeFrontDocumentWithoutSaving()
+        set currentStep to "reopening the saved document"
         my openDocument(savePath)
 
+        set currentStep to "reading reopened document contents"
         set actualText to my readFrontDocumentContents()
+        set currentStep to "closing the reopened document"
         my closeFrontDocumentWithoutSaving()
 
         if actualText is expectedText then
@@ -35,8 +43,8 @@ on runScenarioA(artifactsRoot)
         end if
 
         return my formatResult("ScenarioA", "failed", startedAt, "Reopened TextEdit content did not match the original text.")
-    on error errorMessage
-        return my formatResult("ScenarioA", "failed", startedAt, errorMessage)
+    on error errorMessage number errorNumber
+        return my formatResult("ScenarioA", "failed", startedAt, currentStep & " failed: " & errorMessage & " (" & errorNumber & ")")
     end try
 end runScenarioA
 
@@ -51,18 +59,27 @@ on runScenarioC(artifactsRoot)
     set startedAt to current date
     set savePath to artifactsRoot & "/scenario-c-unicode.txt"
     set expectedText to "Emoji line: 😀" & linefeed & "Arabic line: مرحبا بكم" & linefeed & "Chinese line: 你好，世界"
+    set currentStep to "initialization"
 
     try
+        set currentStep to "resetting TextEdit"
         my resetTextEdit()
+        set currentStep to "creating a plain-text unicode document"
         my createPlainDocument(expectedText)
+        set currentStep to "saving the unicode document"
         my saveFrontDocument(savePath)
 
+        set currentStep to "checking file encoding"
         set encodingReport to do shell script "file -I " & quoted form of savePath
 
+        set currentStep to "closing the saved unicode document"
         my closeFrontDocumentWithoutSaving()
+        set currentStep to "reopening the unicode document"
         my openDocument(savePath)
 
+        set currentStep to "reading reopened unicode content"
         set actualText to my readFrontDocumentContents()
+        set currentStep to "closing the reopened unicode document"
         my closeFrontDocumentWithoutSaving()
 
         if actualText is expectedText and encodingReport contains "utf-8" then
@@ -70,8 +87,8 @@ on runScenarioC(artifactsRoot)
         end if
 
         return my formatResult("ScenarioC", "failed", startedAt, "Unicode verification or utf-8 encoding check did not pass.")
-    on error errorMessage
-        return my formatResult("ScenarioC", "failed", startedAt, errorMessage)
+    on error errorMessage number errorNumber
+        return my formatResult("ScenarioC", "failed", startedAt, currentStep & " failed: " & errorMessage & " (" & errorNumber & ")")
     end try
 end runScenarioC
 
@@ -81,24 +98,28 @@ on runScenarioD(artifactsRoot)
     set savePath to artifactsRoot & "/scenario-d-unsaved.txt"
     set originalText to "Original saved file content."
     set modifiedText to "Modified content that must remain unsaved after cancel."
+    set currentStep to "initialization"
 
     try
+        set currentStep to "preparing the on-disk text file"
         do shell script "printf %s " & quoted form of originalText & " > " & quoted form of savePath
 
+        set currentStep to "resetting TextEdit"
         my resetTextEdit()
+        set currentStep to "opening the saved document"
         my openDocument(savePath)
+        set currentStep to "modifying the front document"
         my setFrontDocumentContents(modifiedText)
-        my requestCloseFrontDocument()
+        set currentStep to "requesting document close through the keyboard shortcut"
+        my requestCloseFrontDocumentViaShortcut()
 
-        delay 0.5
+        set currentStep to "waiting for the unsaved-changes sheet"
+        my waitForUnsavedChangesSheet(5)
 
+        set currentStep to "clicking Cancel on the unsaved-changes sheet"
         tell application "System Events"
             tell process "TextEdit"
                 set frontmost to true
-
-                if not (exists sheet 1 of window 1) then
-                    error "The unsaved-changes confirmation sheet did not appear."
-                end if
 
                 click button "Cancel" of sheet 1 of window 1
             end tell
@@ -106,10 +127,14 @@ on runScenarioD(artifactsRoot)
 
         delay 0.5
 
+        set currentStep to "reading the modified editor contents"
         set actualEditorText to my readFrontDocumentContents()
+        set currentStep to "reading the on-disk file contents"
         set diskText to do shell script "cat " & quoted form of savePath
+        set currentStep to "checking whether TextEdit is still running"
         set appStillOpen to my checkTextEditRunning()
 
+        set currentStep to "closing the front document without saving"
         my closeFrontDocumentWithoutSaving()
 
         if appStillOpen and actualEditorText is modifiedText and diskText is originalText then
@@ -117,8 +142,8 @@ on runScenarioD(artifactsRoot)
         end if
 
         return my formatResult("ScenarioD", "failed", startedAt, "Cancel did not preserve the expected TextEdit editor state and on-disk file content.")
-    on error errorMessage
-        return my formatResult("ScenarioD", "failed", startedAt, errorMessage)
+    on error errorMessage number errorNumber
+        return my formatResult("ScenarioD", "failed", startedAt, currentStep & " failed: " & errorMessage & " (" & errorNumber & ")")
     end try
 end runScenarioD
 
@@ -127,11 +152,15 @@ on runScenarioE()
     set startedAt to current date
     set originalText to "baseline text"
     set replacementText to "replacement"
+    set currentStep to "initialization"
 
     try
+        set currentStep to "resetting TextEdit"
         my resetTextEdit()
+        set currentStep to "creating the shortcut test document"
         my createPlainDocument(originalText)
 
+        set currentStep to "sending keyboard shortcuts through System Events"
         tell application "System Events"
             tell process "TextEdit"
                 set frontmost to true
@@ -144,7 +173,9 @@ on runScenarioE()
 
         delay 0.5
 
+        set currentStep to "reading the editor contents after undo"
         set actualText to my readFrontDocumentContents()
+        set currentStep to "closing the shortcut test document"
         my closeFrontDocumentWithoutSaving()
 
         if actualText is originalText then
@@ -152,24 +183,28 @@ on runScenarioE()
         end if
 
         return my formatResult("ScenarioE", "failed", startedAt, "Command-based shortcut parity check did not restore the original text.")
-    on error errorMessage
-        return my formatResult("ScenarioE", "failed", startedAt, errorMessage)
+    on error errorMessage number errorNumber
+        return my formatResult("ScenarioE", "failed", startedAt, currentStep & " failed: " & errorMessage & " (" & errorNumber & ")")
     end try
 end runScenarioE
 
 
 on resetTextEdit()
-    tell application "TextEdit"
-        activate
-    end tell
+    with timeout of 10 seconds
+        tell application "TextEdit"
+            activate
+        end tell
+    end timeout
 
     delay 0.5
 
     if my checkTextEditRunning() then
         try
-            tell application "TextEdit"
-                close every document saving no
-            end tell
+            with timeout of 10 seconds
+                tell application "TextEdit"
+                    close every document saving no
+                end tell
+            end timeout
         end try
     end if
 end resetTextEdit
@@ -183,65 +218,107 @@ end checkTextEditRunning
 
 
 on createPlainDocument(documentContents)
-    tell application "TextEdit"
-        activate
-        set newDocument to make new document with properties {text:documentContents}
-    end tell
+    with timeout of 10 seconds
+        tell application "TextEdit"
+            activate
+            set newDocument to make new document
+            try
+                set rich text of newDocument to false
+            end try
+            set text of newDocument to documentContents
+        end tell
+    end timeout
 
     delay 0.5
 end createPlainDocument
 
 
 on openDocument(filePath)
-    tell application "TextEdit"
-        activate
-        open POSIX file filePath
-    end tell
+    with timeout of 15 seconds
+        tell application "TextEdit"
+            activate
+            open POSIX file filePath
+        end tell
+    end timeout
 
     delay 0.8
 end openDocument
 
 
 on saveFrontDocument(filePath)
-    tell application "TextEdit"
-        save front document in POSIX file filePath
-    end tell
+    with timeout of 20 seconds
+        tell application "TextEdit"
+            save front document in POSIX file filePath
+        end tell
+    end timeout
 
     delay 0.8
 end saveFrontDocument
 
 
 on closeFrontDocumentWithoutSaving()
-    tell application "TextEdit"
-        if (count of documents) is greater than 0 then
-            close front document saving no
-        end if
-    end tell
+    with timeout of 10 seconds
+        tell application "TextEdit"
+            if (count of documents) is greater than 0 then
+                close front document saving no
+            end if
+        end tell
+    end timeout
 
     delay 0.4
 end closeFrontDocumentWithoutSaving
 
 
-on requestCloseFrontDocument()
-    tell application "TextEdit"
-        close front document saving ask
-    end tell
-end requestCloseFrontDocument
+on requestCloseFrontDocumentViaShortcut()
+    with timeout of 10 seconds
+        tell application "System Events"
+            tell process "TextEdit"
+                set frontmost to true
+                keystroke "w" using command down
+            end tell
+        end tell
+    end timeout
+
+    delay 0.3
+end requestCloseFrontDocumentViaShortcut
+
+
+on waitForUnsavedChangesSheet(timeoutSeconds)
+    set deadline to (current date) + timeoutSeconds
+
+    repeat while (current date) is less than deadline
+        tell application "System Events"
+            tell process "TextEdit"
+                if (exists window 1) and (exists sheet 1 of window 1) then
+                    return
+                end if
+            end tell
+        end tell
+
+        delay 0.2
+    end repeat
+
+    error "The unsaved-changes confirmation sheet did not appear within " & timeoutSeconds & " seconds."
+end waitForUnsavedChangesSheet
 
 
 on setFrontDocumentContents(documentContents)
-    tell application "TextEdit"
-        set text of front document to documentContents
-    end tell
+    with timeout of 10 seconds
+        tell application "TextEdit"
+            set text of front document to documentContents
+        end tell
+    end timeout
 
     delay 0.4
 end setFrontDocumentContents
 
 
 on readFrontDocumentContents()
-    tell application "TextEdit"
-        return (text of front document) as string
-    end tell
+    with timeout of 10 seconds
+        tell application "TextEdit"
+            return (text of front document) as string
+        end tell
+    end timeout
 end readFrontDocumentContents
 
 
