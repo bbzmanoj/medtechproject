@@ -8,6 +8,8 @@ FlaUI is a strong fit because it is a C# wrapper over Windows UI Automation, whi
 
 FlaUI also keeps the automation stack relatively lean. It does not require a separate driver service, it models windows and controls in a way that maps well to page objects, and it supports the kinds of interactions that commonly become fragile in desktop automation: modal dialogs, focus changes, native file pickers, and mixed standard/custom controls.
 
+If a BDD layer is required, the recommended addition is **Reqnroll** on top of the current NUnit-based stack. That allows feature files and step definitions to sit above the existing abstractions and page objects while keeping FlaUI as the underlying Windows automation tool.
+
 ## Factors influencing the recommendation
 
 - **Technology stack alignment:** The application under test and the automation project are both in the Microsoft/.NET ecosystem, so using a C#-native automation framework reduces friction.
@@ -46,3 +48,5 @@ For a Windows-first .NET suite, the additional driver layer makes setup, executi
 ## Summary recommendation
 
 Use **FlaUI** as the default framework for Windows desktop UI automation in this codebase. It best matches the current .NET stack, the team's likely skills, and the long-term maintenance needs of a Windows-native test suite. WinAppDriver + Appium remains a viable alternative, but it was not chosen because it adds more infrastructure without providing a better fit for the core automation problem.
+
+If the team wants BDD-style specifications, add **Reqnroll** as a thin behavior layer above NUnit and the existing framework rather than replacing FlaUI.

@@ -72,6 +72,10 @@ if (command === 'tests') {
   runDotnet(['--filter', 'FullyQualifiedName~NotepadPlusPlus.FlaUI.Tests.Tests.']);
 }
 
+if (command === 'bdd') {
+  runDotnet(['--filter', 'FullyQualifiedName~NotepadPlusPlus.FlaUI.Tests.Features.']);
+}
+
 if (command === 'filter') {
   if (!rawArgs[0]) {
     fail('Provide a filter. Example: npm run test:one -- Name~DialogBehaviorTests');

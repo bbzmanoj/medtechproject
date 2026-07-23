@@ -10,6 +10,8 @@
 
 I would recommend a layered Windows UI automation framework using NUnit for execution, FlaUI for Windows UI Automation, and an HTML reporter such as ExtentReports for evidence capture. This keeps the stack close to the product technology, reduces infrastructure overhead, and makes the suite easier to own long term.
 
+If the team wants a BDD layer, I would add **Reqnroll** on top of NUnit and keep FlaUI underneath as the Windows automation engine. That adds readable feature files and step definitions without changing the core page-object and abstraction structure.
+
 Alternatives such as WinAppDriver + Appium or image-based tools are worth considering, but I would set them aside initially. WinAppDriver introduces another runtime dependency and service layer. Image-based tools are more fragile under display scaling, theme changes, and CI session differences.
 
 ## Framework structure
@@ -45,6 +47,26 @@ I would automate workflows that are stable, clinically relevant, and high-signal
 - Core keyboard shortcuts used constantly by real users
 
 I would explicitly avoid automating highly cosmetic behaviors early, low-value menu permutations, or unstable areas that the team does not yet understand. The initial goal is trustworthy regression coverage, not broad but noisy coverage.
+
+## BDD pilot for the selected test
+
+If the framework is extended with BDD, I would start with a single pilot conversion rather than rewriting the suite. The best initial candidate in the current code is `OpenDialog_LoadsExistingFile` from `DocumentWorkflowTests` because it is small, clear, and already maps directly to user behavior.
+
+Example Reqnroll feature:
+
+```gherkin
+Feature: Document workflow
+
+	Scenario: Open dialog loads an existing file
+		Given Notepad++ is open
+		And an existing file contains "Pre-existing file content for open dialog validation."
+		When I open that file through the Open dialog
+		Then the editor should display the existing file content
+```
+
+In this model, the Reqnroll step definitions should stay thin and call the same framework methods the NUnit test already uses. The step layer would prepare the file, call the application abstraction to open it, and assert against the editor text. FlaUI-specific locator logic should remain in page objects and dialogs, not in the BDD steps.
+
+This approach keeps the existing framework intact while proving whether BDD adds value for stakeholder readability and test collaboration.
 
 ## CI/CD integration
 

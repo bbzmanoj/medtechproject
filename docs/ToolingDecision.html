@@ -196,6 +196,7 @@
     <p>The primary recommendation is <strong>FlaUI</strong> for Windows desktop UI automation.</p>
     <p>FlaUI is a strong fit because it is a C# wrapper over Windows UI Automation, which means it works naturally with a .NET-based test stack and gives direct access to native Windows controls, dialogs, and window state. For applications like Notepad++ and similar Windows desktop products, that direct access matters more than generic cross-platform tooling because the main challenge is interacting reliably with rich desktop behavior rather than browser-like navigation.</p>
     <p>FlaUI also keeps the automation stack relatively lean. It does not require a separate driver service, it models windows and controls in a way that maps well to page objects, and it supports the kinds of interactions that commonly become fragile in desktop automation: modal dialogs, focus changes, native file pickers, and mixed standard/custom controls.</p>
+    <p>If a BDD layer is required, the recommended addition is <strong>Reqnroll</strong> on top of the current NUnit-based stack. That allows feature files and step definitions to sit above the existing abstractions and page objects while keeping FlaUI as the underlying Windows automation tool.</p>
 
     <h2>Factors Influencing the Recommendation</h2>
     <p>The recommendation is driven by the technical and operational fit of the tool, not just feature parity.</p>
@@ -293,7 +294,7 @@
       <li><strong>Cross-platform-first frameworks:</strong> These are less compelling when the target application is explicitly Windows desktop and the critical requirement is deep Windows UI interaction.</li>
     </ul>
 
-    <p class="footer-note">Recommendation: use FlaUI as the default framework for Windows desktop UI automation in this codebase because it best matches the .NET stack, the team's likely skills, and the long-term maintenance needs of a Windows-native test suite.</p>
+    <p class="footer-note">Recommendation: use FlaUI as the default framework for Windows desktop UI automation in this codebase because it best matches the .NET stack, the team's likely skills, and the long-term maintenance needs of a Windows-native test suite. If the team wants BDD-style specifications, add <strong>Reqnroll</strong> as a thin behavior layer above NUnit and the existing framework rather than replacing FlaUI.</p>
   </main>
 </body>
 </html>

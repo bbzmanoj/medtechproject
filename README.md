@@ -2,11 +2,14 @@
 
 This repository scaffolds a Windows desktop UI automation suite for Notepad++ using C#, NUnit, and FlaUI. It is designed to support Medtech's Windows desktop applications, which are built primarily in .NET, with a framework shape that supports future platform expansion.
 
+The suite now also includes a Reqnroll-based BDD layer for the document workflow scenarios, while keeping FlaUI as the underlying Windows automation engine.
+
 ## What this repo includes
 
 - A .NET Framework 4.8 NUnit test project that launches a dedicated Notepad++ instance for each test.
 - A desktop-oriented Page Object Model for the main editor, menu bar, Replace dialog, native file dialogs, and unsaved-changes dialog, wrapped by higher-level editor abstractions.
 - Windows-focused automated scenarios for file round-trip, replace/undo, Unicode handling, dialog behavior, shortcut abstraction, and a deliberately flaky retry example.
+- A Reqnroll BDD feature for the document workflow scenarios, backed by thin step definitions and the same existing abstraction and page-object layers.
 - Extent HTML reporting with screenshot capture on failure, published to an openable `index.html`.
 - A GitHub Actions workflow with a working Windows execution lane and a macOS TextEdit lane executed through AppleScript on a macOS runner.
 - Supporting design and implementation docs under `docs/`.
@@ -54,6 +57,19 @@ npm run test:tests
 npm run test:one -- "Name~Launches_NotepadPlusPlus_MainWindow"
 ```
 
+BDD scenarios can be run directly through the shared Node test runner:
+
+```powershell
+node .\scripts\run-tests.js bdd
+```
+
+Command behavior:
+
+- `npm test`: runs all Windows/.NET tests in the project, including classic NUnit tests and generated Reqnroll feature tests
+- `npm run test:tests`: runs only the classic NUnit tests under the `NotepadPlusPlus.FlaUI.Tests.Tests` namespace
+- `node .\scripts\run-tests.js bdd`: runs only the generated Reqnroll BDD feature tests under the `NotepadPlusPlus.FlaUI.Tests.Features` namespace
+- `npm run test:one -- "<filter>"`: runs any custom `dotnet test` filter you provide
+
 Run a focused smoke test:
 
 ```powershell
@@ -84,6 +100,10 @@ NotepadPlusPlus.FlaUI.Tests/
     Windows/
   Reporting/
   Support/
+  Bdd/
+  Hooks/
+  Steps/
+  Features/
   Tests/
     SmokeTests/
 docs/
@@ -99,6 +119,17 @@ The framework is shaped so another platform can be added without rewriting the s
 - `Platforms/Mac/` is a placeholder for a future TextEdit adapter.
 
 That means the current Windows suite still runs exactly as before, while the design demonstrates how a macOS lane would plug into the same scenario-facing API later.
+
+## BDD structure
+
+The BDD layer is intentionally thin and sits on top of the existing framework rather than replacing it.
+
+- `Features/` contains the Reqnroll `.feature` files
+- `Steps/` contains the step definitions that call the existing abstractions and page objects
+- `Hooks/` contains scenario lifecycle hooks for launch, teardown, reporting, and screenshots
+- `Bdd/` contains shared scenario context used by the Reqnroll steps and hooks
+
+This keeps Gherkin steps readable while preserving the existing rule that FlaUI-specific selectors and dialog logic stay below the step-definition layer.
 
 ## Known limitations
 
