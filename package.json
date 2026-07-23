@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "test": "node .\\scripts\\run-tests.js all",
+    "test:bdd": "node .\\scripts\\run-tests.js bdd",
     "test:macos": "node .\\scripts\\run-macos-tests.js",
     "test:smoke": "node .\\scripts\\run-tests.js smoke",
     "test:file": "node .\\scripts\\run-tests.js file",
