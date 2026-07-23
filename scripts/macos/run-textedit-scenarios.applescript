@@ -223,7 +223,7 @@ on createPlainDocument(documentContents)
             activate
             set newDocument to make new document
             try
-                set rich text of newDocument to false
+                set |rich text| of newDocument to false
             end try
             set text of newDocument to documentContents
         end tell
