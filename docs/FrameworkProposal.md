@@ -77,6 +77,13 @@ Desktop UI suites should run in a dedicated Windows agent with interactive deskt
 - screenshots and logs attached for every failure
 - trend visibility on pass rate and retry rate
 
+The current repository already includes two CI lanes:
+
+- **Windows lane:** runs the FlaUI + NUnit framework and uploads Windows test artifacts including the test artifact folders, HTML report output, and TRX results.
+- **macOS lane:** uses AppleScript automation against TextEdit, publishes a workflow summary for the Mac run, and uploads the Mac JSON and HTML report artifacts from the `Platforms/Mac` area.
+
+That means the CI design is already demonstrating two different levels of platform support. Windows is the primary automated UI lane for the real framework under test. macOS is currently an adapter-validation lane that proves the cross-platform structure, exercises the TextEdit runner, and reports its own implementation status separately.
+
 ## Risks and mitigations
 
 - Desktop UI automation is sensitive to focus and timing. Mitigation: explicit waits, isolated test instances, and disciplined retry only for known flaky cases.
