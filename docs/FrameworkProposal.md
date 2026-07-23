@@ -17,12 +17,22 @@ Alternatives such as WinAppDriver + Appium or image-based tools are worth consid
 The framework should separate test intent from UI mechanics.
 
 - `Tests/`: scenario-driven test cases only
+- `Abstractions/`: platform-neutral contracts that define what the test layer can do without depending on a concrete UI implementation
 - `PageObjects/`: editor, menus, dialogs, and shared desktop flows
+- `Platforms/`: platform-specific implementations that adapt the abstractions to Windows or another target environment
 - `Infrastructure/`: app launch, session control, teardown, evidence capture
 - `Support/`: clipboard, keyboard abstraction, test data, artifact paths, retry metadata
 - `Reporting/`: HTML report lifecycle and screenshot attachment
 
-For patterns, I would use a Page Object Model with dialog abstractions and keep OS-specific behavior below the test layer. If the suite later needs macOS support, I would introduce a factory or strategy layer that returns the correct file dialog and shortcut implementation per platform.
+The abstraction layer is required here because the tests already work against a platform-neutral application contract rather than directly against the Windows page objects. That gives the suite a stable API for common actions such as open, save, replace, and close, while keeping the concrete Windows automation details behind the implementation layer.
+
+This separation is useful for three reasons:
+
+- it keeps tests focused on scenario intent instead of FlaUI-specific interaction details
+- it allows the implementation to change without rewriting test bodies
+- it gives the framework a clear seam for future platform adapters or alternate dialog implementations
+
+For patterns, I would use a Page Object Model with dialog abstractions and keep OS-specific behavior below the test layer. In the current structure, the factory and abstraction layers already provide that seam, even though the active implementation is still Windows-first.
 
 ## What to automate first
 
