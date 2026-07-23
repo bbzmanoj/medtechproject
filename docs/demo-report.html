@@ -1,0 +1,143 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Windows Desktop Scenario Report</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f5f7fb; color: #1f2937; }
+    header { padding: 32px; background: linear-gradient(135deg, #0f3d56, #1b6b7b); color: #fff; }
+    main { padding: 24px 32px; }
+    .summary, .charts { display: flex; gap: 16px; margin: 0 0 24px; flex-wrap: wrap; }
+    .card, .chart-card { background: #fff; border-radius: 16px; padding: 16px 20px; box-shadow: 0 10px 30px rgba(15, 61, 86, 0.08); min-width: 160px; }
+    .chart-card { flex: 1 1 320px; }
+    .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: #6b7280; }
+    .value { font-size: 28px; font-weight: 700; margin-top: 6px; }
+    .subtle { color: #475467; margin-top: 8px; }
+    .chart-row { display: grid; grid-template-columns: 90px 1fr 48px; gap: 12px; align-items: center; margin: 12px 0; }
+    .chart-track { background: #e5e7eb; border-radius: 999px; overflow: hidden; height: 14px; }
+    .chart-fill { height: 100%; border-radius: 999px; }
+    .chart-fill.passed { background: #22a06b; }
+    .chart-fill.failed { background: #d92d20; }
+    .chart-fill.skipped { background: #1570ef; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(15, 61, 86, 0.08); }
+    th, td { padding: 14px 16px; border-bottom: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: #6b7280; background: #f9fafb; }
+    tr:last-child td { border-bottom: 0; }
+    .status-pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+    .status-pill.passed { background: #e8f7f0; color: #13795b; }
+    .status-pill.failed { background: #fdeceb; color: #b42318; }
+    .status-pill.skipped { background: #e8f1fd; color: #175cd3; }
+    a { color: #175cd3; text-decoration: none; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+    .note { margin-top: 16px; color: #475467; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Windows Desktop Scenario Report</h1>
+    <p>Automation: FlaUI on Windows UI Automation | Generated: 2026-07-23T01:01:40.1737145+12:00</p>
+  </header>
+  <main>
+    <section class="summary">
+      <div class="card"><div class="label">Passed</div><div class="value">6</div></div>
+      <div class="card"><div class="label">Failed</div><div class="value">2</div></div>
+      <div class="card"><div class="label">Skipped</div><div class="value">0</div></div>
+      <div class="card"><div class="label">OS</div><div class="value">Windows</div></div>
+    </section>
+    <section class="charts">
+      <div class="chart-card">
+        <div class="label">Status Distribution</div>
+<div class="chart-row"><span>Passed</span><div class="chart-track"><div class="chart-fill passed" style="width: 75%"></div></div><span>75%</span></div>
+<div class="chart-row"><span>Failed</span><div class="chart-track"><div class="chart-fill failed" style="width: 25%"></div></div><span>25%</span></div>
+<div class="chart-row"><span>Skipped</span><div class="chart-track"><div class="chart-fill skipped" style="width: 0%"></div></div><span>0%</span></div>
+      </div>
+      <div class="chart-card">
+        <div class="label">Run Summary</div>
+        <div class="value">8</div>
+        <div class="subtle">Total tests in this report</div>
+        <div class="subtle">Run started: 23 Jul 2026 00:59:33</div>
+        <div class="subtle">Total duration: 109085 ms</div>
+      </div>
+    </section>
+    <table>
+      <thead>
+        <tr>
+          <th>Test</th>
+          <th>Status</th>
+          <th>Attempt</th>
+          <th>Duration (ms)</th>
+          <th>Details</th>
+          <th>Screenshot</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ScenarioD_UnsavedChangesDialog_CancelKeepsApplicationOpenAndLeavesFileUnchanged</td>
+          <td><span class="status-pill passed">passed</span></td>
+          <td>1</td>
+          <td>15597</td>
+          <td>Passed</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td>OpenDialog_LoadsExistingFile</td>
+          <td><span class="status-pill passed">passed</span></td>
+          <td>1</td>
+          <td>14178</td>
+          <td>Passed</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td>ScenarioA_FileRoundTrip_PreservesLargeText</td>
+          <td><span class="status-pill passed">passed</span></td>
+          <td>1</td>
+          <td>32351</td>
+          <td>Passed</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td>ScenarioC_UnicodeAndEncoding_PreservesUtf8Characters</td>
+          <td><span class="status-pill passed">passed</span></td>
+          <td>1</td>
+          <td>27025</td>
+          <td>Passed</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td>ScenarioB_FindAndReplace_ReplacesExpectedCount_AndUndoRestoresOriginal</td>
+          <td><span class="status-pill failed">failed</span></td>
+          <td>1</td>
+          <td>10211</td>
+          <td>Multiple failures or warnings in test:<br>  1)   Assert.That(CountOccurrences(updated, target), Is.EqualTo(0))<br>  Expected: 0<br>  But was:  12<br><br>  2)   Assert.That(CountOccurrences(updated, replacement), Is.EqualTo(originalReplacementCount + originalTargetCount))<br>  Expected: 13<br>  But was:  1<br><br></td>
+          <td><a href="file:///C:/Users/deepika.udesh/OneDrive%20-%20Fidelity%20Life%20Assurance%20Company%20Limited/Desktop/NotepadProject/NotepadPlusPlus.FlaUI.Tests/bin/Debug/net48/TestArtifacts/ScenarioB_FindAndReplace_ReplacesExpectedCount_AndUndoRestoresOriginal/attempt-1/failure.png">Open screenshot</a></td>
+        </tr>
+        <tr>
+          <td>ScenarioE_KeyboardShortcutParity_SelectAllAndUndoWorkWithoutOsBranching</td>
+          <td><span class="status-pill passed">passed</span></td>
+          <td>1</td>
+          <td>6109</td>
+          <td>Passed</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td>TextPropagation_UsesSelectiveRetry_WhenEditorStabilizationIsSlow</td>
+          <td><span class="status-pill passed">passed</span></td>
+          <td>1</td>
+          <td>2904</td>
+          <td>Passed</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td>DuplicateOfLaunches_NotepadPlusPlus_MainWindow_FailsIntentionally_WhenEnabled</td>
+          <td><span class="status-pill failed">failed</span></td>
+          <td>1</td>
+          <td>710</td>
+          <td>  Intentional demo failure: this test duplicates the launch check and uses an incorrect expected title so the HTML report shows a realistic failed UI assertion.<br>Assert.That(Session.MainWindow.Title, Does.Contain(&quot;WordPad&quot;))<br>  Expected: String containing &quot;WordPad&quot;<br>  But was:  &quot;new 1 - Notepad++&quot;<br></td>
+          <td><a href="file:///C:/Users/deepika.udesh/OneDrive%20-%20Fidelity%20Life%20Assurance%20Company%20Limited/Desktop/NotepadProject/NotepadPlusPlus.FlaUI.Tests/bin/Debug/net48/TestArtifacts/DuplicateOfLaunches_NotepadPlusPlus_MainWindow_FailsIntentionally_WhenEnabled/attempt-1/failure.png">Open screenshot</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="note">This report is generated for Windows UI runs and includes the same summary style as the macOS report, with status charts for quick review.</p>
+  </main>
+</body>
+</html>
